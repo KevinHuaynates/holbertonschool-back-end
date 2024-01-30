@@ -1,35 +1,45 @@
 #!/usr/bin/python3
 """
-Script to export data in JSON format for all tasks from all employees.
+Export all employee TODO list progress to JSON format
 """
+
 import json
 import requests
-from sys import argv
 
 if __name__ == "__main__":
-    url = 'https://jsonplaceholder.typicode.com/users/'
-    employees = requests.get(url).json()
+    api_url = "https://jsonplaceholder.typicode.com"
 
-    all_tasks = {}
+    # Get all users
+    users_response = requests.get(f"{api_url}/users")
+    users_data = users_response.json()
 
-    for employee in employees:
-        user_id = str(employee['id'])
-        username = employee['username']
+    # Create a dictionary to store tasks for all users
+    all_users_tasks = {}
 
-        url = f'https://jsonplaceholder.typicode.com/todos?userId={user_id}'
-        tasks = requests.get(url).json()
+    for user_data in users_data:
+        user_id = user_data.get("id")
+        user_name = user_data.get("username")
 
-        task_list = []
-        for task in tasks:
-            task_dict = {
-                "username": username,
-                "task": task['title'],
-                "completed": task['completed']
+        # Get TODO list for each user
+        todo_response = requests.get(f"{api_url}/todos?userId={user_id}")
+        todo_data = todo_response.json()
+
+        # Create a list to store tasks for the current user
+        user_tasks = [
+            {
+                "username": user_name,
+                "task": task["title"],
+                "completed": task["completed"]
             }
-            task_list.append(task_dict)
+            for task in todo_data
+        ]
 
-        all_tasks[user_id] = task_list
+        # Add user tasks to the dictionary
+        all_users_tasks[str(user_id)] = user_tasks
 
-    with open('todo_all_employees.json', 'w') as json_file:
-        json.dump(all_tasks, json_file)
+    # Export to JSON
+    json_file_name = "todo_all_employees.json"
+    with open(json_file_name, mode='w') as jsonfile:
+        json.dump(all_users_tasks, jsonfile)
 
+    print(f"JSON file '{json_file_name}' created.")
