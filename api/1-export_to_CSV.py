@@ -1,50 +1,52 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """
-Extend your Python script to export data in CSV format.
+Export data to CSV format
 """
+
 import csv
 import requests
 from sys import argv
 
+if __name__ == '__main__':
+    if len(argv) != 2 or not argv[1].isdigit():
+        exit()
 
-def export_to_csv(user_id):
-    api_url = "https://jsonplaceholder.typicode.com"
-    users = requests.get(f"{api_url}/users/{user_id}").json()
-    todo_data = requests.get(f"{api_url}/todos?userId={user_id}").json()
+    user_id = int(argv[1])
+    user_url = f'https://jsonplaceholder.typicode.com/users/{user_id}'
+    todos_url = f'https://jsonplaceholder.typicode.com/todos?userId={user_id}'
 
-    if not users or not todo_data:
-        print("User or tasks not found.")
-        exit(1)
+    user_response = requests.get(user_url)
+    todos_response = requests.get(todos_url)
 
-    username = users["username"]
-    filename = f"{user_id}.csv"
+    if user_response.status_code != 200 or todos_response.status_code != 200:
+        exit()
 
-    with open(filename, 'w', newline='') as csvfile:
-        fieldnames = [
-            "USER_ID",
-            "USERNAME",
-            "TASK_COMPLETED_STATUS",
-            "TASK_TITLE"
-        ]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    user = user_response.json()
+    todos = todos_response.json()
 
+    username = user.get('username')
+
+    if not username:
+        exit()
+
+    filename = f'{user_id}.csv'
+    fieldnames = [
+        "USER_ID",
+        "USERNAME",
+        "TASK_COMPLETED_STATUS",
+        "TASK_TITLE"
+    ]
+
+    with open(filename, mode='w', newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
 
-        for task in todo_data:
+        for task in todos:
+            completed_status = "True" if task["completed"] else "False"
+
             writer.writerow({
                 "USER_ID": user_id,
                 "USERNAME": username,
-                "TASK_COMPLETED_STATUS": str(task["completed"]),
+                "TASK_COMPLETED_STATUS": completed_status,
                 "TASK_TITLE": task["title"]
             })
-
-    print(f"CSV file '{filename}' created.")
-
-
-if __name__ == "__main__":
-    if len(argv) != 2:
-        print("Usage: {} <user_id>".format(argv[0]))
-        exit(1)
-
-    user_id = argv[1]
-    export_to_csv(user_id)
