@@ -22,15 +22,27 @@ if __name__ == "__main__":
     user_name = user_data.get("username")
 
     # Get TODO list
-    todo_response = requests.get("{}/todos?userId={}".format(api_url, employee_id))
+    todo_response = requests.get(
+        "{}/todos?userId={}".format(api_url, employee_id)
+    )
     todo_data = todo_response.json()
 
     # Export to CSV
     csv_file_name = "{}.csv".format(user_id)
     with open(csv_file_name, mode='w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        csv_writer.writerow(["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
+        csv_writer.writerow([
+            "USER_ID",
+            "USERNAME",
+            "TASK_COMPLETED_STATUS",
+            "TASK_TITLE"
+        ])
         for task in todo_data:
-            csv_writer.writerow([user_id, user_name, str(task.get("completed")), task.get("title")])
+            csv_writer.writerow([
+                user_id,
+                user_name,
+                str(task.get("completed")),
+                task.get("title")
+            ])
 
     print("CSV file '{}' created.".format(csv_file_name))
