@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Script para exportar datos de tareas de un usuario en formato CSV.
-"""
+"""Script para exportar datos de tareas de un usuario en formato CSV."""
 import csv
 import requests
 from sys import argv
