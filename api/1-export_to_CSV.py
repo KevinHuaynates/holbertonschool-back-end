@@ -29,6 +29,9 @@ if __name__ == "__main__":
     )
     todo_data = todo_response.json()
 
+    # Filter tasks owned by the user
+    user_tasks = [task for task in todo_data if task['userId'] == employee_id]
+
     # Export to CSV
     csv_file_name = "{}.csv".format(user_id)
     with open(csv_file_name, mode='w', newline='') as csvfile:
@@ -39,7 +42,7 @@ if __name__ == "__main__":
             "TASK_COMPLETED_STATUS",
             "TASK_TITLE"
         ])
-        for task in todo_data:
+        for task in user_tasks:
             csv_writer.writerow([
                 user_id,
                 user_name,
@@ -48,4 +51,4 @@ if __name__ == "__main__":
             ])
 
     # Print number of tasks
-    print("Number of tasks in CSV: {}".format(len(todo_data)))
+    print("Number of tasks in CSV: {}".format(len(user_tasks)))
