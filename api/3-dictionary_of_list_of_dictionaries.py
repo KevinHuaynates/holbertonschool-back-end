@@ -1,45 +1,33 @@
 #!/usr/bin/python3
 """
-Export all employee TODO list progress to JSON format
+Extend your Python script to export data in the JSON format.
 """
-
 import json
 import requests
+from sys import argv
 
 if __name__ == "__main__":
     api_url = "https://jsonplaceholder.typicode.com"
+    users = requests.get(f"{api_url}/users").json()
+    todo_data = requests.get(f"{api_url}/todos").json()
 
-    # Get all users
-    users_response = requests.get(f"{api_url}/users")
-    users_data = users_response.json()
+    user_tasks = {}
 
-    # Create a dictionary to store tasks for all users
-    all_users_tasks = {}
+    for user in users:
+        user_id = user["id"]
+        username = user["username"]
 
-    for user_data in users_data:
-        user_id = user_data.get("id")
-        user_name = user_data.get("username")
+        tasks = []
+        for task in todo_data:
+            if task['userId'] == user_id:
+                tasks.append({
+                    "username": username,
+                    "task": task["title"],
+                    "completed": task["completed"]
+                })
 
-        # Get TODO list for each user
-        todo_response = requests.get(f"{api_url}/todos?userId={user_id}")
-        todo_data = todo_response.json()
+        user_tasks[str(user_id)] = tasks
 
-        # Create a list to store tasks for the current user
-        user_tasks = [
-            {
-                "username": user_name,
-                "task": task["title"],
-                "completed": task["completed"]
-            }
-            for task in todo_data
-        ]
-
-        # Add user tasks to the dictionary
-        all_users_tasks[str(user_id)] = user_tasks
-
-    # Export to JSON
-    json_file_name = "todo_all_employees.json"
-    with open(json_file_name, mode='w') as jsonfile:
-        json.dump(all_users_tasks, jsonfile)
-
-    print(f"JSON file '{json_file_name}' created.")
+    with open('todo_all_employees.json', 'w') as json_file:
+        json.dump(user_tasks, json_file)
+        print("JSON file 'todo_all_employees.json' created.")
