@@ -47,4 +47,5 @@ if __name__ == "__main__":
                 task.get("title")
             ])
 
-    print("CSV file '{}' created.".format(csv_file_name))
+    # Print number of tasks
+    print("Number of tasks in CSV: {}".format(len(todo_data)))
