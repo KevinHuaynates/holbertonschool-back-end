@@ -3,8 +3,8 @@
 Export employee TODO list progress to CSV format
 """
 
-import requests
 import csv
+import requests
 from sys import argv
 
 if __name__ == "__main__":
@@ -16,7 +16,9 @@ if __name__ == "__main__":
     api_url = "https://jsonplaceholder.typicode.com"
 
     # Get user data
-    user_response = requests.get("{}/users/{}".format(api_url, employee_id))
+    user_response = requests.get(
+        "{}/users/{}".format(api_url, employee_id)
+    )
     user_data = user_response.json()
     user_id = user_data.get("id")
     user_name = user_data.get("username")
