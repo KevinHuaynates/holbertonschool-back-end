@@ -20,7 +20,8 @@ if __name__ == "__main__":
     employee_name = user_data.get("name")
 
     # Get TODO list
-    todo_response = requests.get("{}/todos?userId={}".format(api_url, employee_id))
+    todo_response = requests.get("{}/todos?userId={}".format(api_url,
+                                                             employee_id))
     todo_data = todo_response.json()
 
     # Calculate progress
@@ -28,7 +29,8 @@ if __name__ == "__main__":
     completed_tasks = sum(1 for task in todo_data if task.get("completed"))
 
     # Display results
-    print("Employee {} is done with tasks({}/{}):".format(employee_name, completed_tasks, total_tasks))
+    print("Employee {} is done with tasks({}/{}):".format
+          (employee_name, completed_tasks, total_tasks))
     for task in todo_data:
         if task.get("completed"):
             print("\t {}".format(task.get("title")))
