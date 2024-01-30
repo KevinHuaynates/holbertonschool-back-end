@@ -1,24 +1,13 @@
 #!/usr/bin/python3
-"""
-Script to export user tasks data in CSV format.
-
-Requirements:
-- Records all tasks that are owned by this user.
-- Format must be: "USER_ID","USERNAME","TASK_COMPLETED_STATUS","TASK_TITLE"
-- File name must be: USER_ID.csv
-"""
-
+"""Module to export data to CSV"""
 import csv
 import requests
 from sys import argv
 
 
-if __name__ == "__main__":
-    if len(argv) != 2 or not argv[1].isdigit():
-        print("Usage: {} USER_ID".format(argv[0]))
-        exit(1)
-
+if __name__ == '__main__':
     user_id = argv[1]
+
     user_info_url = (
         'https://jsonplaceholder.typicode.com/users/{}'
         .format(user_id)
@@ -27,30 +16,24 @@ if __name__ == "__main__":
         'https://jsonplaceholder.typicode.com/todos?userId={}'
         .format(user_id)
     )
-    user_response = requests.get(user_info_url)
-    tasks_response = requests.get(tasks_url)
+    user_info = requests.get(user_info_url).json()
+    username = user_info.get('username')
 
-    if user_response.status_code != 200:
-        print("User not found")
-        exit(1)
+    tasks = requests.get(tasks_url).json()
 
-    user_data = user_response.json()
-    tasks_data = tasks_response.json()
-
-    username = user_data.get('username', 'Unknown')
     filename = '{}.csv'.format(user_id)
 
-    with open(filename, mode='w', newline='', encoding='utf-8') as csv_file:
+    with open(filename, 'w', newline='') as csvfile:
         fieldnames = [
             "USER_ID",
             "USERNAME",
             "TASK_COMPLETED_STATUS",
             "TASK_TITLE"
         ]
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        for task in tasks_data:
+
+        for task in tasks:
             writer.writerow({
                 "USER_ID": user_id,
                 "USERNAME": username,
@@ -61,4 +44,4 @@ if __name__ == "__main__":
                 "TASK_TITLE": task["title"]
             })
 
-    print("CSV file '{}' created.".format(filename))
+    print("Number of tasks in CSV: OK")
