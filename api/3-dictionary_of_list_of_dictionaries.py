@@ -32,4 +32,3 @@ if __name__ == "__main__":
     with open('todo_all_employees.json', 'w') as json_file:
         json.dump(user_tasks, json_file, indent=2)
         print("JSON file 'todo_all_employees.json' created.")
-
