@@ -21,6 +21,7 @@ if __name__ == "__main__":
         for task in todo_data:
             if task['userId'] == user_id:
                 tasks.append({
+                    "username": username,
                     "task": task["title"],
                     "completed": task["completed"]
                 })
