@@ -14,19 +14,27 @@ if __name__ == "__main__":
     user_tasks = {}
 
     for user in users:
-        user_id = user["id"]
+        user_id = str(user["id"])
         username = user["username"]
 
         tasks = []
         for task in todo_data:
-            if task['userId'] == user_id:
+            if task['userId'] == user["id"]:
                 tasks.append({
                     "username": username,
                     "task": task["title"],
                     "completed": task["completed"]
                 })
 
-        user_tasks[str(user_id)] = tasks
+        if not tasks:
+            # If the user has no tasks, include an empty task entry
+            tasks.append({
+                "username": username,
+                "task": None,
+                "completed": None
+            })
+
+        user_tasks[user_id] = tasks
 
     with open('todo_all_employees.json', 'w') as json_file:
         json.dump(user_tasks, json_file)
