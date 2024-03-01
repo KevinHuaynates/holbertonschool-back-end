@@ -7,6 +7,7 @@ import csv
 import requests
 from sys import argv
 
+
 if __name__ == "__main__":
     if len(argv) != 2 or not argv[1].isdigit():
         print("Usage: {} <employee_id>".format(argv[0]))
@@ -34,12 +35,12 @@ if __name__ == "__main__":
     csv_file_name = "{}.csv".format(user_id)
     with open(csv_file_name, mode='w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        csv_writer.writerow([
-            "USER_ID",
-            "USERNAME",
-            "TASK_COMPLETED_STATUS",
-            "TASK_TITLE"
-        ])
+##        csv_writer.writerow([
+##            "USER_ID",
+##            "USERNAME",
+##            "TASK_COMPLETED_STATUS",
+##            "TASK_TITLE"
+##        ])
         for task in user_tasks:
             csv_writer.writerow([
                 user_id,
